@@ -6,6 +6,6 @@ import java.util.Optional;
 public interface GenericDAO <E>{
     Iterable<E> readAll();
     Optional<E> readById(Integer id);
-    Optional<E> create(E entity);
+    E save(E entity);
     void deleteById(Integer id);
 }

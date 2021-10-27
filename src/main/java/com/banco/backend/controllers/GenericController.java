@@ -15,9 +15,8 @@ public class GenericController<E,S extends GenericDAO<E>> {
     protected final S service;
     protected String nombreEntidad;
     private Map<String,Object> mensaje;
-    public GenericController(S service,String nombreEntidad) {
+    public GenericController(S service) {
         this.service = service;
-        this.nombreEntidad = nombreEntidad;
     }
 
     @GetMapping
@@ -25,12 +24,12 @@ public class GenericController<E,S extends GenericDAO<E>> {
         mensaje = new HashMap<>();
         List<E> list = (List<E>) service.readAll();
         if(list.isEmpty()){
-            mensaje.put("status",Boolean.FALSE);
+            mensaje.put("status",400);
             mensaje.put("message","No se encontraron datos asociados a la entidad "+nombreEntidad);
             return ResponseEntity.badRequest().body(mensaje);
         }
-        mensaje.put("status",Boolean.TRUE);
-        mensaje.put("message",list);
+        mensaje.put("status",200);
+        mensaje.put("data",list);
         return ResponseEntity.ok(mensaje);
     }
     @GetMapping("/{id}")
@@ -38,39 +37,39 @@ public class GenericController<E,S extends GenericDAO<E>> {
         mensaje = new HashMap<>();
         Optional<E> e = service.readById(id);
         if(!e.isPresent()){
-            mensaje.put("status",Boolean.FALSE);
+            mensaje.put("status",400);
             mensaje.put("message","No se encontraron datos asociados a la entidad "+nombreEntidad+" con el id "+id);
             return ResponseEntity.badRequest().body(mensaje);
         }
-        mensaje.put("status",Boolean.TRUE);
-        mensaje.put("message",e);
+        mensaje.put("status",200);
+        mensaje.put("data",e);
         return ResponseEntity.ok(mensaje);
     }
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody E entidad){
+    public ResponseEntity<?> save(@RequestBody E entidad){
         mensaje = new HashMap<>();
-        Optional<E> e = service.create(entidad);
-        if(!e.isPresent()){
-            mensaje.put("status",Boolean.FALSE);
+        E e = service.save(entidad);
+        if(e == null){
+            mensaje.put("status",400);
             mensaje.put("message","No se pudo insertar en la entidad "+nombreEntidad);
             return ResponseEntity.badRequest().body(mensaje);
         }
-        mensaje.put("status",Boolean.TRUE);
-        mensaje.put("message",e);
+        mensaje.put("status",201);
+        mensaje.put("data",e);
         return ResponseEntity.ok(mensaje);
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteById(Integer id){
+    public ResponseEntity<?> deleteById(@PathVariable Integer id){
         mensaje = new HashMap<>();
         Optional<E> e = service.readById(id);
         if(!e.isPresent()){
-            mensaje.put("status",Boolean.FALSE);
+            mensaje.put("status",400);
             mensaje.put("message","No se encontraron datos asociados a la entidad "+nombreEntidad+" con el id "+id);
             return ResponseEntity.badRequest().body(mensaje);
         }
         service.deleteById(id);
         mensaje.put("status",Boolean.TRUE);
-        mensaje.put("message","Dato eliminado correctamente");
+        mensaje.put("data",200);
         return ResponseEntity.ok(mensaje);
     }
 }

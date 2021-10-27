@@ -30,8 +30,8 @@ public class GenericDAOImpl <E,R extends CrudRepository<E,Integer>> implements G
 
     @Override
     @Transactional(readOnly = false)
-    public Optional<E> create(E entity) {
-        return (Optional<E>) repository.save(entity);
+    public E save(E entity) {
+        return repository.save(entity);
     }
 
     @Override
