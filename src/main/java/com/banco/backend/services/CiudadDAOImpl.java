@@ -14,4 +14,8 @@ public class CiudadDAOImpl extends GenericDAOImpl<Ciudad, CiudadRepository> impl
         super(repository);
     }
 
+    @Override
+    public Iterable<Ciudad> obtenerPorIdDepartamento(Integer id) {
+        return repository.obtenerPorIdDepartamento(id);
+    }
 }

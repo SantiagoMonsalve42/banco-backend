@@ -16,12 +16,10 @@ import java.time.LocalDateTime;
 public class EmpleadoDTO extends PersonaDTO{
     private BigDecimal sueldo;
     private TipoEmpleado tipo_empleado;
-    private Sucursal sucursal;
 
-    public EmpleadoDTO(Integer id, String primer_nombre, String segundo_nombre, String primer_apellido, String segundo_apellido, String email, String password, LocalDateTime fechaAlta, LocalDateTime fechaModificacion, Direccion direccion, BigDecimal sueldo, TipoEmpleado tipo_empleado, Sucursal sucursal) {
-        super(id, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, email, password, fechaAlta, fechaModificacion, direccion);
+    public EmpleadoDTO(Integer id, String primer_nombre, String segundo_nombre, String primer_apellido, String segundo_apellido, String email, LocalDateTime fechaAlta, LocalDateTime fechaModificacion, Direccion direccion, BigDecimal sueldo, TipoEmpleado tipo_empleado, Sucursal sucursal) {
+        super(id, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, email, fechaAlta, fechaModificacion, direccion);
         this.sueldo = sueldo;
         this.tipo_empleado = tipo_empleado;
-        this.sucursal = sucursal;
     }
 }

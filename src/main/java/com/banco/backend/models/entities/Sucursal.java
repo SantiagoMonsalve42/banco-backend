@@ -1,10 +1,15 @@
 package com.banco.backend.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Set;
 
 @Entity
@@ -12,18 +17,18 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Sucursal {
+public class Sucursal implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(name = "nombre",length = 50)
     private String nombre;
 
-    @OneToOne( cascade = CascadeType.ALL)
-    @JoinColumn(name = "direccion_id",referencedColumnName = "id")
+    @Embedded
     private Direccion direccion;
 
     @OneToMany(mappedBy = "sucursal",fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<Empleado> empleados;
 
     @ManyToOne(
@@ -36,4 +41,6 @@ public class Sucursal {
     )
     @JoinColumn(name = "ciudad_id")
     private Ciudad ciudad;
+
+
 }

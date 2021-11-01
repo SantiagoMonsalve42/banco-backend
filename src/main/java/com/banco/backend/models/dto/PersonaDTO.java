@@ -19,7 +19,6 @@ public abstract class PersonaDTO {
     private String primer_apellido;
     private String segundo_apellido;
     private String email;
-    private String password;
     private LocalDateTime fechaAlta;
     private LocalDateTime fechaModificacion;
     private Direccion direccion;

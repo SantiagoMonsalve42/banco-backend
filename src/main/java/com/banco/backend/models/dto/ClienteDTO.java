@@ -16,8 +16,8 @@ import java.util.Set;
 public class ClienteDTO extends PersonaDTO{
     private TipoCliente tipo_cliente;
 
-    public ClienteDTO(Integer id, String primer_nombre, String segundo_nombre, String primer_apellido, String segundo_apellido, String email, String password, LocalDateTime fechaAlta, LocalDateTime fechaModificacion, Direccion direccion, TipoCliente tipo_cliente) {
-        super(id, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, email, password, fechaAlta, fechaModificacion, direccion);
+    public ClienteDTO(Integer id, String primer_nombre, String segundo_nombre, String primer_apellido, String segundo_apellido, String email, LocalDateTime fechaAlta, LocalDateTime fechaModificacion, Direccion direccion, TipoCliente tipo_cliente) {
+        super(id, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, email,  fechaAlta, fechaModificacion, direccion);
         this.tipo_cliente = tipo_cliente;
     }
 }

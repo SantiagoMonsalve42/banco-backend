@@ -15,6 +15,5 @@ public class CiudadDTO {
 
     private Integer id;
     private String nombre;
-    private Departamento departamento;
 
 }

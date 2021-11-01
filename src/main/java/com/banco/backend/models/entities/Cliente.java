@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Set;
 
 @Entity
@@ -14,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @PrimaryKeyJoinColumn(name = "persona_id")
-public class Cliente extends Persona{
+public class Cliente extends Persona implements Serializable {
     @Column(nullable = false,length = 100)
     private TipoCliente tipo_cliente;
     @OneToMany(

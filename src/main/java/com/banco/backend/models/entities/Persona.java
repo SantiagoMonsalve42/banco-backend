@@ -1,5 +1,6 @@
 package com.banco.backend.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
@@ -40,7 +41,7 @@ public abstract class Persona implements Serializable {
     private String segundo_apellido;
     @Column(name="email",nullable = false,length = 60,unique = true)
     private String email;
-    @Column(name="password",nullable = false,length = 50)
+    @Column(name="password",nullable = false,length = 150)
     private String password;
     @Column(name = "fecha_alta")
     private LocalDateTime fechaAlta;
@@ -52,8 +53,8 @@ public abstract class Persona implements Serializable {
             fetch = FetchType.LAZY
     )
     private Set<Telefono> telefonos;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "direccion_persona",referencedColumnName = "id")
+
+    @Embedded
     private Direccion direccion;
 
 

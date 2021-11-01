@@ -1,6 +1,8 @@
 package com.banco.backend.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,5 +27,7 @@ public class Departamento implements Serializable {
             mappedBy = "departamento",
             fetch = FetchType.LAZY
     )
+    @JsonIgnore
     private Set<Ciudad> ciudades;
+
 }

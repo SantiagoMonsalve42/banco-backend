@@ -16,5 +16,5 @@ public class SucursalDTO {
     private Integer id;
     private String nombre;
     private Direccion direccion;
-    private Ciudad ciudad;
+    private CiudadDTO ciudad;
 }
