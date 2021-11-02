@@ -22,4 +22,5 @@ public abstract class PersonaDTO {
     private LocalDateTime fechaAlta;
     private LocalDateTime fechaModificacion;
     private Direccion direccion;
+    private Telefono telefono;
 }

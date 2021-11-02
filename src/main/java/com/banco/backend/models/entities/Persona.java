@@ -24,7 +24,7 @@ import java.util.Set;
         property = "tipo"
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = Cliente.class,name = "cliene"),
+        @JsonSubTypes.Type(value = Cliente.class,name = "cliente"),
         @JsonSubTypes.Type(value = Empleado.class,name = "empleado"),
 })
 public abstract class Persona implements Serializable {
@@ -48,14 +48,12 @@ public abstract class Persona implements Serializable {
     @Column(name = "fecha_modificacion")
     private LocalDateTime fechaModificacion;
 
-    @ManyToMany(
-            mappedBy = "personas",
-            fetch = FetchType.LAZY
-    )
-    private Set<Telefono> telefonos;
 
     @Embedded
     private Direccion direccion;
+
+    @Embedded
+    private Telefono telefono;
 
 
     @PrePersist
