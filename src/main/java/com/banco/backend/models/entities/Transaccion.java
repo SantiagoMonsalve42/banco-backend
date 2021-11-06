@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -25,6 +26,8 @@ public class Transaccion implements Serializable {
     private LocalDateTime fechaModificacion;
     @Column(name = "estado")
     private Byte estado;
+    @Column(name ="saldo")
+    private BigDecimal saldo;
     @PrePersist
     private void prePersist(){
         this.fechaAlta = LocalDateTime.now();
@@ -44,4 +47,6 @@ public class Transaccion implements Serializable {
     )
     @JoinColumn(name = "cuenta_id")
     private Cuenta cuenta;
+
+
 }

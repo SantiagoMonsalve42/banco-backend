@@ -17,5 +17,5 @@ public class PrestamoDTO {
     private Byte estado;
     private LocalDateTime fechaAlta;
     private LocalDateTime fechaModificacion;
-    private Cuenta cuenta;
+    private CuentaDTO cuenta;
 }

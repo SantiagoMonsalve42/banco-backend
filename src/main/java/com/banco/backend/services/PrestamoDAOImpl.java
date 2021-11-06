@@ -12,4 +12,9 @@ public class PrestamoDAOImpl extends GenericDAOImpl<Prestamo, PrestamoRepository
     public PrestamoDAOImpl(PrestamoRepository repository) {
         super(repository);
     }
+
+    @Override
+    public Iterable<Prestamo> readByClientId(Integer id) {
+        return repository.readByClientId(id);
+    }
 }

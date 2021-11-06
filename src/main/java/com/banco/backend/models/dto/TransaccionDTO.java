@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -17,5 +18,6 @@ public class TransaccionDTO {
     private LocalDateTime fechaAlta;
     private LocalDateTime fechaModificacion;
     private Byte estado;
-    private Cuenta cuenta;
+    private CuentaDTO cuenta;
+    private BigDecimal saldo;
 }

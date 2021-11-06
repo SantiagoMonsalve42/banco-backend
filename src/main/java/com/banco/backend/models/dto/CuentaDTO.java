@@ -19,8 +19,6 @@ public class CuentaDTO {
     private Integer id;
     private TipoCuenta tipo_cuenta;
     private BigDecimal saldo;
-    private LocalDateTime fechaAlta;
-    private LocalDateTime fechaModificacion;
-    private Cliente cliente;
+    private ClienteDTO cliente;
 
 }
