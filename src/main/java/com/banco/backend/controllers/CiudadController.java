@@ -19,7 +19,9 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/ciudad")
 public class CiudadController extends GenericController<Ciudad, CiudadDAO> {
-
+    private String jwtToken;
+    @Autowired
+    private SessionController session;
     @Autowired
     private DepartamentoDAO departamentoDAO;
     private Map<String,Object> mensaje;
@@ -32,10 +34,13 @@ public class CiudadController extends GenericController<Ciudad, CiudadDAO> {
     }
 
     @Override
-    public ResponseEntity<?> readAll(){
+    public ResponseEntity<?> readAll(@RequestHeader String user){
         mensaje = new HashMap<>();
         List<Ciudad> list = (List<Ciudad>) service.readAll();
         List<CiudadDTO> ciudadDTOS = mapper.mapCiudad(list);
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(ciudadDTOS.isEmpty()){
             mensaje.put("status",400);
             mensaje.put("message","No se encontraron datos asociados a la entidad "+nombreEntidad);
@@ -46,10 +51,13 @@ public class CiudadController extends GenericController<Ciudad, CiudadDAO> {
         return ResponseEntity.ok(mensaje);
     }
     @GetMapping("/departamento/{id}")
-    public ResponseEntity<?> getByDepartmentId(@PathVariable Integer id) {
+    public ResponseEntity<?> getByDepartmentId(@PathVariable Integer id,@RequestHeader String user) {
         mensaje = new HashMap<>();
         List<Ciudad> ciudades = (List<Ciudad>) service.obtenerPorIdDepartamento(id);
         List<CiudadDTO> ciudadDTOS = mapper.mapCiudad(ciudades);
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(ciudadDTOS.isEmpty()){
             mensaje.put("status",400);
             mensaje.put("message","No se encontraron datos asociados al departamento con id "+id);
@@ -61,10 +69,13 @@ public class CiudadController extends GenericController<Ciudad, CiudadDAO> {
     }
 
     @Override
-    public ResponseEntity<?> readById(@PathVariable Integer id){
+    public ResponseEntity<?> readById(@PathVariable Integer id,@RequestHeader String user){
         mensaje = new HashMap<>();
         Optional<Ciudad> e = service.readById(id);
         CiudadDTO ciudadDTO = mapper.mapCiudad(e.get());
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(ciudadDTO == null){
             mensaje.put("status",400);
             mensaje.put("message","No se encontraron datos asociados a la entidad "+nombreEntidad+" con el id "+id);
@@ -75,10 +86,13 @@ public class CiudadController extends GenericController<Ciudad, CiudadDAO> {
         return ResponseEntity.ok(mensaje);
     }
     @Override
-    public ResponseEntity<?> save(@RequestBody Ciudad entidad){
+    public ResponseEntity<?> save(@RequestBody Ciudad entidad,@RequestHeader String user){
         mensaje = new HashMap<>();
         Ciudad e = service.save(entidad);
         CiudadDTO ciudadDTO = mapper.mapCiudad(e);
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(ciudadDTO == null){
             mensaje.put("status",400);
             mensaje.put("message","No se pudo insertar en la entidad "+nombreEntidad);
@@ -89,10 +103,13 @@ public class CiudadController extends GenericController<Ciudad, CiudadDAO> {
         return ResponseEntity.ok(mensaje);
     }
     @PutMapping("/{idCiudad}/departamento/{idDepartamento}")
-    public ResponseEntity<?> asociarDepartamento(@PathVariable Integer idCiudad,@PathVariable Integer idDepartamento){
+    public ResponseEntity<?> asociarDepartamento(@PathVariable Integer idCiudad,@PathVariable Integer idDepartamento,@RequestHeader String user){
         mensaje = new HashMap<>();
         Optional<Ciudad> ciudad = service.readById(idCiudad);
         Optional<Departamento> departamento = departamentoDAO.readById(idDepartamento);
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(!ciudad.isPresent()){
             mensaje.put("status",400);
             mensaje.put("message","No existe ciudad con id "+idCiudad);

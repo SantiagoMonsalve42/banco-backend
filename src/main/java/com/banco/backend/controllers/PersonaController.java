@@ -11,16 +11,17 @@ import com.banco.backend.models.mappers.EmpleadoMPImpl;
 import com.banco.backend.utils.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public abstract class PersonaController extends GenericController<Persona, PersonaDAO> {
+    private String jwtToken;
+    @Autowired
+    private SessionController sessionController;
+
     private Map<String,Object> mensaje;
     private Session session;
     @Autowired
@@ -31,11 +32,13 @@ public abstract class PersonaController extends GenericController<Persona, Perso
         super(service);
     }
     @Override
-    public ResponseEntity<?> save(@RequestBody Persona persona){
+    public ResponseEntity<?> save(@RequestBody Persona persona,@RequestHeader String user){
         PersonaDTO dto = null;
         mensaje = new HashMap<>();
         session = new Session();
-
+        jwtToken = sessionController.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         persona.setPassword(session.getSHA512(persona.getPassword()));
         Persona save = service.save(persona);
         if(save instanceof Empleado){
@@ -55,11 +58,14 @@ public abstract class PersonaController extends GenericController<Persona, Perso
     }
     
     @PutMapping("/pass/{id}")
-    public ResponseEntity<?> changePassword(@RequestBody Persona persona,@PathVariable Integer id){
+    public ResponseEntity<?> changePassword(@RequestBody Persona persona,@PathVariable Integer id,@RequestHeader String user){
         PersonaDTO dto = null;
         mensaje = new HashMap<>();
         session = new Session();
         Optional<Persona> personaRead = service.readById(id);
+        jwtToken = sessionController.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(!personaRead.isPresent()){
             mensaje.put("status",400);
             mensaje.put("message","No se encontro "+nombreEntidad+" con el id "+id);
@@ -80,11 +86,14 @@ public abstract class PersonaController extends GenericController<Persona, Perso
     }
 
     @PutMapping("/phones/{id}")
-    public ResponseEntity<?> changePhones(@RequestBody Persona persona,@PathVariable Integer id){
+    public ResponseEntity<?> changePhones(@RequestBody Persona persona,@PathVariable Integer id,@RequestHeader String user){
         PersonaDTO dto = null;
         mensaje = new HashMap<>();
         session = new Session();
         Optional<Persona> personaRead = service.readById(id);
+        jwtToken = sessionController.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(!personaRead.isPresent()){
             mensaje.put("status",400);
             mensaje.put("message","No se encontro "+nombreEntidad+" con el id "+id);
@@ -108,11 +117,14 @@ public abstract class PersonaController extends GenericController<Persona, Perso
     }
 
     @PutMapping("/names/{id}")
-    public ResponseEntity<?> changeNames(@RequestBody Persona persona,@PathVariable Integer id){
+    public ResponseEntity<?> changeNames(@RequestBody Persona persona,@PathVariable Integer id,@RequestHeader String user){
         PersonaDTO dto = null;
         mensaje = new HashMap<>();
         session = new Session();
         Optional<Persona> personaRead = service.readById(id);
+        jwtToken = sessionController.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(!personaRead.isPresent()){
             mensaje.put("status",400);
             mensaje.put("message","No se encontro "+nombreEntidad+" con el id "+id);
@@ -140,5 +152,5 @@ public abstract class PersonaController extends GenericController<Persona, Perso
         return ResponseEntity.ok(mensaje);
     }
 
-    public abstract ResponseEntity<?> save(@RequestBody Empleado entidad);
+    public abstract ResponseEntity<?> save(@RequestBody Empleado entidad,@RequestHeader String user);
 }

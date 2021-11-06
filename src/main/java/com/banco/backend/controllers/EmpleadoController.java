@@ -17,6 +17,9 @@ import java.util.*;
 @RestController
 @RequestMapping("/empleado")
 public class EmpleadoController extends PersonaController{
+    private String jwtToken;
+    @Autowired
+    private SessionController session;
     private Map<String,Object> mensaje;
     @Autowired
     private EmpleadoMPImpl empleadoMP;
@@ -29,10 +32,13 @@ public class EmpleadoController extends PersonaController{
     }
 
     @Override
-    public ResponseEntity<?> readAll(){
+    public ResponseEntity<?> readAll(@RequestHeader String user){
         mensaje = new HashMap<>();
         List<Empleado> personas = (List<Empleado>) service.readAllEmployees();
         List<EmpleadoDTO> empleadoDTOS = empleadoMP.mapEmpleado(personas);
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(empleadoDTOS.isEmpty()){
             mensaje.put("status",400);
             mensaje.put("message","No se encontraron datos asociados a la entidad "+nombreEntidad);
@@ -43,10 +49,13 @@ public class EmpleadoController extends PersonaController{
         return ResponseEntity.ok(mensaje);
     }
     @Override
-    public ResponseEntity<?> readById(@PathVariable Integer id){
+    public ResponseEntity<?> readById(@PathVariable Integer id,@RequestHeader String user){
         mensaje = new HashMap<>();
         Optional<Persona> e = service.readById(id);
         EmpleadoDTO empleadoDTO = empleadoMP.mapEmpleado((Empleado) e.get());
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(!e.isPresent()){
             mensaje.put("status",400);
             mensaje.put("message","No se encontraron datos asociados a la entidad "+nombreEntidad+" con el id "+id);
@@ -57,10 +66,13 @@ public class EmpleadoController extends PersonaController{
         return ResponseEntity.ok(mensaje);
     }
     @Override
-    public ResponseEntity<?> save(@RequestBody Empleado entidad){
+    public ResponseEntity<?> save(@RequestBody Empleado entidad,@RequestHeader String user){
         mensaje = new HashMap<>();
         Empleado e = (Empleado) service.save(entidad);
         EmpleadoDTO empleadoDTO = empleadoMP.mapEmpleado(e);
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(empleadoDTO == null){
             mensaje.put("status",400);
             mensaje.put("message","No se pudo insertar en la entidad "+nombreEntidad);
@@ -71,9 +83,12 @@ public class EmpleadoController extends PersonaController{
         return ResponseEntity.ok(mensaje);
     }
     @PutMapping("/tipo/{id}")
-    public ResponseEntity<?> cambiarTipo(@PathVariable Integer id, @RequestBody Empleado empleado){
+    public ResponseEntity<?> cambiarTipo(@PathVariable Integer id, @RequestBody Empleado empleado,@RequestHeader String user){
         mensaje = new HashMap<>();
         Optional<Persona> persona = service.readById(id);
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(!persona.isPresent()){
             mensaje.put("status",400);
             mensaje.put("message","No se encontro el empleado con id "+id);
@@ -89,9 +104,12 @@ public class EmpleadoController extends PersonaController{
 
     }
     @PutMapping("/sueldo/{id}")
-    public ResponseEntity<?> cambiarSueldo(@PathVariable Integer id, @RequestBody Empleado empleado){
+    public ResponseEntity<?> cambiarSueldo(@PathVariable Integer id, @RequestBody Empleado empleado,@RequestHeader String user){
         mensaje = new HashMap<>();
         Optional<Persona> persona = service.readById(id);
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(!persona.isPresent()){
             mensaje.put("status",400);
             mensaje.put("message","No se encontro el empleado con id "+id);
@@ -106,10 +124,13 @@ public class EmpleadoController extends PersonaController{
         return ResponseEntity.ok(mensaje);
     }
     @PutMapping("/{idEmpleado}/sucursal/{idSucursal}")
-    public ResponseEntity<?> asignarSucursal(@PathVariable Integer idEmpleado,@PathVariable Integer idSucursal){
+    public ResponseEntity<?> asignarSucursal(@PathVariable Integer idEmpleado,@PathVariable Integer idSucursal,@RequestHeader String user){
         mensaje = new HashMap<>();
         Optional<Persona> persona = service.readById(idEmpleado);
         Optional<Sucursal> sucursal = sucursalDAO.readById(idSucursal);
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(!persona.isPresent()){
             mensaje.put("status",400);
             mensaje.put("message","No se encontro el empleado con id "+idEmpleado);

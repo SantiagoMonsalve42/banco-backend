@@ -7,6 +7,7 @@ import com.banco.backend.models.dto.PrestamoDTO;
 import com.banco.backend.models.entities.Cuenta;
 import com.banco.backend.models.entities.Prestamo;
 import com.banco.backend.models.mappers.PrestamoMPImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,10 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/prestamo")
 public class PrestamoController extends GenericController<Prestamo, PrestamoDAO> {
+    private String jwtToken;
+    @Autowired
+    private SessionController session;
+
     private Map<String,Object> mensaje;
     private PrestamoMPImpl mapper;
     private CuentaDAO cuentaDAO;
@@ -30,10 +35,13 @@ public class PrestamoController extends GenericController<Prestamo, PrestamoDAO>
         nombreEntidad = "Prestamo";
     }
     @Override
-    public ResponseEntity<?> readAll(){
+    public ResponseEntity<?> readAll(@RequestHeader String user){
         mensaje = new HashMap<>();
         List<Prestamo> list = (List<Prestamo>) service.readAll();
         List<PrestamoDTO> prestamoDTOS = mapper.mapPrestamo(list);
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(list.isEmpty()){
             mensaje.put("status",400);
             mensaje.put("message","No se encontraron datos asociados a la entidad "+nombreEntidad);
@@ -44,9 +52,12 @@ public class PrestamoController extends GenericController<Prestamo, PrestamoDAO>
         return ResponseEntity.ok(mensaje);
     }
     @Override
-    public ResponseEntity<?> readById(@PathVariable Integer id){
+    public ResponseEntity<?> readById(@PathVariable Integer id,@RequestHeader String user){
         mensaje = new HashMap<>();
         Optional<Prestamo> e = service.readById(id);
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(!e.isPresent()){
             mensaje.put("status",400);
             mensaje.put("message","No se encontraron datos asociados a la entidad "+nombreEntidad+" con el id "+id);
@@ -60,9 +71,12 @@ public class PrestamoController extends GenericController<Prestamo, PrestamoDAO>
         return ResponseEntity.ok(mensaje);
     }
     @Override
-    public ResponseEntity<?> save(@RequestBody Prestamo entidad){
+    public ResponseEntity<?> save(@RequestBody Prestamo entidad,@RequestHeader String user){
         mensaje = new HashMap<>();
         Prestamo e = service.save(entidad);
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(e == null){
             mensaje.put("status",400);
             mensaje.put("message","No se pudo insertar en la entidad "+nombreEntidad);
@@ -74,10 +88,13 @@ public class PrestamoController extends GenericController<Prestamo, PrestamoDAO>
         return ResponseEntity.ok(mensaje);
     }
     @PutMapping("{idPrestamo}/cuenta/{idCuenta}")
-    public ResponseEntity<?> asignarCuenta(@PathVariable Integer idCuenta,@PathVariable Integer idPrestamo){
+    public ResponseEntity<?> asignarCuenta(@PathVariable Integer idCuenta,@PathVariable Integer idPrestamo,@RequestHeader String user){
         mensaje = new HashMap<>();
         Optional<Prestamo> prestamoExiste = service.readById(idPrestamo);
         Optional<Cuenta> cuentaExiste = cuentaDAO.readById(idCuenta);
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(!prestamoExiste.isPresent()){
             mensaje.put("status",400);
             mensaje.put("message","No se encontraron "+nombreEntidad+" con id "+idPrestamo);
@@ -98,9 +115,12 @@ public class PrestamoController extends GenericController<Prestamo, PrestamoDAO>
         return ResponseEntity.ok(mensaje);
     }
     @PutMapping("/saldo")
-    public ResponseEntity<?> sumarORestar(@RequestBody Prestamo prestamo){
+    public ResponseEntity<?> sumarORestar(@RequestBody Prestamo prestamo,@RequestHeader String user){
         mensaje = new HashMap<>();
         Optional<Prestamo> prestamoExiste = service.readById(prestamo.getId());
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(!prestamoExiste.isPresent()){
             mensaje.put("status",400);
             mensaje.put("message","No existe "+nombreEntidad+" con el id cliente "+prestamo.getId());
@@ -126,9 +146,12 @@ public class PrestamoController extends GenericController<Prestamo, PrestamoDAO>
         return ResponseEntity.ok(mensaje);
     }
     @GetMapping("/cliente/{idCliente}")
-    public ResponseEntity<?> readByClientId(@PathVariable Integer idCliente){
+    public ResponseEntity<?> readByClientId(@PathVariable Integer idCliente,@RequestHeader String user){
         mensaje = new HashMap<>();
         List<Prestamo> prestamos = (List<Prestamo>)service.readByClientId(idCliente);
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(prestamos.isEmpty()){
             mensaje.put("status",400);
             mensaje.put("message","No hay prestamos asociados al cliente con id "+idCliente);

@@ -15,4 +15,8 @@ public interface PersonaRepository extends CrudRepository<Persona,Integer> {
     Iterable<Empleado> readAllEmployees();
     @Query("select c from Cliente c")
     Iterable<Cliente> readAllCostumers();
+    @Query("select e from Empleado e where UPPER(e.email) = ?1")
+    Optional<Empleado> readByMailEmpleado(String mail);
+    @Query("select c from Cliente c where UPPER(c.email) = ?1")
+    Optional<Cliente> readByMailCliente(String mail);
 }

@@ -8,6 +8,7 @@ import com.banco.backend.models.entities.Cuenta;
 import com.banco.backend.models.entities.Persona;
 import com.banco.backend.models.mappers.CuentaMPImpl;
 import com.banco.backend.services.CuentaDAOImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,10 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/cuenta")
 public class CuentaController extends GenericController<Cuenta, CuentaDAO> {
+    private String jwtToken;
+    @Autowired
+    private SessionController session;
+
     private Map<String,Object> mensaje;
     private CuentaMPImpl mapper;
     private ClienteDAO clienteDAO;
@@ -33,10 +38,13 @@ public class CuentaController extends GenericController<Cuenta, CuentaDAO> {
     }
 
     @Override
-    public ResponseEntity<?> readAll(){
+    public ResponseEntity<?> readAll(@RequestHeader String user){
         mensaje = new HashMap<>();
         List<Cuenta> list = (List<Cuenta>) service.readAll();
         List<CuentaDTO> cuentaDTOS = mapper.mapCuenta(list);
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(list.isEmpty()){
             mensaje.put("status",400);
             mensaje.put("message","No se encontraron datos asociados a la entidad "+nombreEntidad);
@@ -47,9 +55,12 @@ public class CuentaController extends GenericController<Cuenta, CuentaDAO> {
         return ResponseEntity.ok(mensaje);
     }
     @Override
-    public ResponseEntity<?> readById(@PathVariable Integer id){
+    public ResponseEntity<?> readById(@PathVariable Integer id,@RequestHeader String user){
         mensaje = new HashMap<>();
         Optional<Cuenta> e = service.readById(id);
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(!e.isPresent()){
             mensaje.put("status",400);
             mensaje.put("message","No se encontraron datos asociados a la entidad "+nombreEntidad+" con el id "+id);
@@ -61,9 +72,12 @@ public class CuentaController extends GenericController<Cuenta, CuentaDAO> {
         return ResponseEntity.ok(mensaje);
     }
     @Override
-    public ResponseEntity<?> save(@RequestBody Cuenta entidad){
+    public ResponseEntity<?> save(@RequestBody Cuenta entidad,@RequestHeader String user){
         mensaje = new HashMap<>();
         Cuenta e = service.save(entidad);
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(e == null){
             mensaje.put("status",400);
             mensaje.put("message","No se pudo insertar en la entidad "+nombreEntidad);
@@ -75,10 +89,13 @@ public class CuentaController extends GenericController<Cuenta, CuentaDAO> {
         return ResponseEntity.ok(mensaje);
     }
     @PutMapping("{idCuenta}/cliente/{idCliente}")
-    public ResponseEntity<?> asignarCliente(@PathVariable Integer idCuenta,@PathVariable Integer idCliente){
+    public ResponseEntity<?> asignarCliente(@PathVariable Integer idCuenta,@PathVariable Integer idCliente,@RequestHeader String user){
         mensaje = new HashMap<>();
         Optional<Cuenta> cuentaExiste = service.readById(idCuenta);
         Optional<Persona> personaExiste = clienteDAO.readById(idCliente);
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(!cuentaExiste.isPresent()){
             mensaje.put("status",400);
             mensaje.put("message","No existe "+nombreEntidad+" con id "+idCuenta);
@@ -99,9 +116,12 @@ public class CuentaController extends GenericController<Cuenta, CuentaDAO> {
         return ResponseEntity.ok(mensaje);
     }
     @GetMapping("/cliente/{idCliente}")
-    public ResponseEntity<?> readByIdCliente(@PathVariable Integer idCliente){
+    public ResponseEntity<?> readByIdCliente(@PathVariable Integer idCliente,@RequestHeader String user){
         mensaje = new HashMap<>();
         List<Cuenta> list = (List<Cuenta>) service.getCuentasByIdPersona(idCliente);
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(list.isEmpty()){
             mensaje.put("status",400);
             mensaje.put("message","No existe "+nombreEntidad+" con el id cliente "+idCliente);
@@ -113,9 +133,12 @@ public class CuentaController extends GenericController<Cuenta, CuentaDAO> {
         return ResponseEntity.ok(mensaje);
     }
     @PutMapping("/saldo")
-    public ResponseEntity<?> sumarORestar(@RequestBody Cuenta cuenta){
+    public ResponseEntity<?> sumarORestar(@RequestBody Cuenta cuenta,@RequestHeader String user){
         mensaje = new HashMap<>();
         Optional<Cuenta> cuentaExiste = service.readById(cuenta.getId());
+        jwtToken = session.getJWTToken(user);
+        mensaje.put("key",jwtToken);
+        mensaje.put("user",user);
         if(!cuentaExiste.isPresent()){
             mensaje.put("status",400);
             mensaje.put("message","No existe "+nombreEntidad+" con el id cliente "+cuenta.getId());
