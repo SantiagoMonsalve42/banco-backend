@@ -9,6 +9,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @SpringBootApplication
 public class BackendApplication {
@@ -26,6 +30,17 @@ public class BackendApplication {
 					.authorizeRequests()
 					.antMatchers(HttpMethod.POST, "/session").permitAll()
 					.anyRequest().authenticated();
+			http.cors();
 		}
+	}
+	@Configuration
+	@EnableWebMvc
+	public class WebConfig implements WebMvcConfigurer {
+
+		@Override
+		public void addCorsMappings(CorsRegistry registry) {
+			registry.addMapping("/**");
+		}
+
 	}
 }

@@ -12,11 +12,9 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,25 +33,29 @@ public class SessionController {
     @PostMapping
     public ResponseEntity<?> login(@RequestBody SessionDTO sessionDTO){
         mensaje = new HashMap<>();
-        String token;
+        String token,id64;
         Session generator = new Session();
         String pass = generator.getSHA512(sessionDTO.getPass());
         Optional<Empleado> empleado = empleadoDAO.readByMailEmpleado(sessionDTO.getEmail());
         Optional<Cliente> cliente = clienteDAO.readByMailCliente(sessionDTO.getEmail());
         if(empleado.isPresent()){
             if(pass.equals(empleado.get().getPassword())){
+                id64 = Base64.getEncoder().encodeToString(empleado.get().getId().toString().getBytes());
                 token = getJWTToken(empleado.get().getEmail());
-                mensaje.put("token",token);
-                mensaje.put("user",empleado.get().getEmail());
+                mensaje.put("key",token);
+                mensaje.put("user",id64);
+                mensaje.put("email",empleado.get().getEmail());
                 mensaje.put("tipo",1);
                 return ResponseEntity.ok(mensaje);
             }
         }
         if(cliente.isPresent()){
             if(pass.equals(cliente.get().getPassword())){
+                id64 = Base64.getEncoder().encodeToString(cliente.get().getId().toString().getBytes());
                 token = getJWTToken(cliente.get().getEmail());
-                mensaje.put("token",token);
-                mensaje.put("user",cliente.get().getEmail());
+                mensaje.put("key",token);
+                mensaje.put("user",id64);
+                mensaje.put("email",cliente.get().getEmail());
                 mensaje.put("tipo",2);
                 return ResponseEntity.ok(mensaje);
             }
