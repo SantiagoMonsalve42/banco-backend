@@ -1,6 +1,7 @@
 package com.banco.backend.models.dto;
 
 import com.banco.backend.models.entities.Cuenta;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,9 @@ import java.time.LocalDateTime;
 public class TransaccionDTO {
     private Integer id;
     private String destino;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime fechaAlta;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime fechaModificacion;
     private Byte estado;
     private CuentaDTO cuenta;

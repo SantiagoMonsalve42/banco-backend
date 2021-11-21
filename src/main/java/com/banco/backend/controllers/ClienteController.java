@@ -69,22 +69,5 @@ public class ClienteController extends PersonaController{
         mensaje.put("data",clienteDTO);
         return ResponseEntity.ok(mensaje);
     }
-    @Override
-    public ResponseEntity<?> save(@RequestBody Empleado entidad,@RequestHeader String user){
-        mensaje = new HashMap<>();
-        Cliente e = (Cliente) service.save(entidad);
-        ClienteDTO clienteDTO = clienteMP.mapCliente(e);
-        jwtToken = session.getJWTToken(user);
-        mensaje.put("key",jwtToken);
-        mensaje.put("user",user);
-        if(clienteDTO == null){
-            mensaje.put("status",400);
-            mensaje.put("message","No se pudo insertar en la entidad "+nombreEntidad);
-            return ResponseEntity.badRequest().body(mensaje);
-        }
-        mensaje.put("status",201);
-        mensaje.put("data",clienteDTO);
-        return ResponseEntity.ok(mensaje);
-    }
 
 }

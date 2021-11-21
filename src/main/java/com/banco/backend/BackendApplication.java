@@ -28,7 +28,7 @@ public class BackendApplication {
 			http.csrf().disable()
 					.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
 					.authorizeRequests()
-					.antMatchers(HttpMethod.POST, "/session").permitAll()
+					.antMatchers(HttpMethod.POST, "/session/**").permitAll()
 					.anyRequest().authenticated();
 			http.cors();
 		}

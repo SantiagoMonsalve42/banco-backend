@@ -1,8 +1,10 @@
 package com.banco.backend.controllers;
 
+import com.banco.backend.models.dao.ClienteDAO;
 import com.banco.backend.models.dao.PersonaDAO;
 import com.banco.backend.models.dao.SucursalDAO;
 import com.banco.backend.models.dto.EmpleadoDTO;
+import com.banco.backend.models.entities.Cliente;
 import com.banco.backend.models.entities.Empleado;
 import com.banco.backend.models.entities.Persona;
 import com.banco.backend.models.entities.Sucursal;
@@ -23,6 +25,8 @@ public class EmpleadoController extends PersonaController{
     private Map<String,Object> mensaje;
     @Autowired
     private EmpleadoMPImpl empleadoMP;
+    @Autowired
+    private ClienteDAO clienteDAO;
     @Autowired
     private SucursalDAO sucursalDAO;
     @Autowired
@@ -62,23 +66,6 @@ public class EmpleadoController extends PersonaController{
             return ResponseEntity.badRequest().body(mensaje);
         }
         mensaje.put("status",200);
-        mensaje.put("data",empleadoDTO);
-        return ResponseEntity.ok(mensaje);
-    }
-    @Override
-    public ResponseEntity<?> save(@RequestBody Empleado entidad,@RequestHeader String user){
-        mensaje = new HashMap<>();
-        Empleado e = (Empleado) service.save(entidad);
-        EmpleadoDTO empleadoDTO = empleadoMP.mapEmpleado(e);
-        jwtToken = session.getJWTToken(user);
-        mensaje.put("key",jwtToken);
-        mensaje.put("user",user);
-        if(empleadoDTO == null){
-            mensaje.put("status",400);
-            mensaje.put("message","No se pudo insertar en la entidad "+nombreEntidad);
-            return ResponseEntity.badRequest().body(mensaje);
-        }
-        mensaje.put("status",201);
         mensaje.put("data",empleadoDTO);
         return ResponseEntity.ok(mensaje);
     }

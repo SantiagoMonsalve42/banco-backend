@@ -2,6 +2,7 @@ package com.banco.backend.models.dto;
 
 import com.banco.backend.models.entities.Direccion;
 import com.banco.backend.models.entities.Telefono;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,9 @@ public abstract class PersonaDTO {
     private String primer_apellido;
     private String segundo_apellido;
     private String email;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime fechaAlta;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime fechaModificacion;
     private Direccion direccion;
     private Telefono telefono;

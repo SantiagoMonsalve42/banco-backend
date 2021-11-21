@@ -1,5 +1,7 @@
 package com.banco.backend.controllers;
 
+import com.banco.backend.models.dao.ClienteDAO;
+import com.banco.backend.models.dao.EmpleadoDAO;
 import com.banco.backend.models.dao.PersonaDAO;
 import com.banco.backend.models.dto.PersonaDTO;
 import com.banco.backend.models.entities.Cliente;
@@ -27,6 +29,10 @@ public abstract class PersonaController extends GenericController<Persona, Perso
     @Autowired
     private EmpleadoMPImpl empleadoMP;
     @Autowired
+    private ClienteDAO clienteDAO;
+    @Autowired
+    private EmpleadoDAO empleadoDAO;
+    @Autowired
     private ClienteMPImpl clienteMP;
     public PersonaController(PersonaDAO service) {
         super(service);
@@ -36,6 +42,13 @@ public abstract class PersonaController extends GenericController<Persona, Perso
         PersonaDTO dto = null;
         mensaje = new HashMap<>();
         session = new Session();
+        Optional<Cliente> CorreoClienteExiste = clienteDAO.readByMailCliente(persona.getEmail());
+        Optional<Empleado> CorreoEmpleadoExiste = empleadoDAO.readByMailEmpleado(persona.getEmail());
+        if(CorreoEmpleadoExiste.isPresent() || CorreoClienteExiste.isPresent()){
+            mensaje.put("status",400);
+            mensaje.put("message","El correo ya existe en el sistema");
+            return ResponseEntity.badRequest().body(mensaje);
+        }
         jwtToken = sessionController.getJWTToken(user);
         mensaje.put("key",jwtToken);
         mensaje.put("user",user);
@@ -152,5 +165,4 @@ public abstract class PersonaController extends GenericController<Persona, Perso
         return ResponseEntity.ok(mensaje);
     }
 
-    public abstract ResponseEntity<?> save(@RequestBody Empleado entidad,@RequestHeader String user);
 }

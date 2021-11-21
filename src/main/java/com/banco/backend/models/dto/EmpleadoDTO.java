@@ -24,4 +24,5 @@ public class EmpleadoDTO extends PersonaDTO{
         this.sueldo = sueldo;
         this.tipo_empleado = tipo_empleado;
     }
+
 }
